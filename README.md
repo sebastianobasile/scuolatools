@@ -16,13 +16,13 @@ Sviluppato da **Sebastiano Basile** — [superscuola.com](https://www.superscuol
 Se questi strumenti ti sono utili, puoi supportarne lo sviluppo con un piccolo contributo volontario. Grazie! ☕
 
 ---
-## 🔗 Demo live
+## 🔗 Demo e utilizzo live
  
 | Pagina | Link |
 |---|---|
-| 🆙 [Area Segreteria Docenti Famiglie] [Visita e utilizza online](https://www.superscuola.com/puiacapuanadeamicis/?folder=%3E%3E%3EP.U.I.A._Strumenti_co-progettati_con_il_supporto_della_I_A%2F%3E%3E%3EArea_Segreteria_Docenti_Famiglie) |
+| 🆙 Area Segreteria Docenti Famiglie | <a href="https://www.superscuola.com/puiacapuanadeamicis/?folder=%3E%3E%3EP.U.I.A._Strumenti_co-progettati_con_il_supporto_della_I_A%2F%3E%3E%3EArea_Segreteria_Docenti_Famiglie" target="_blank">Visita e utilizza online</a> |
  
-> Le demo sono quelle dell'installazione reale presso l'I.C. Capuana-De Amicis di Avola (SR). L'accesso è protetto da password.
+> Le demo sono quelle dell'installazione reale presso l'I.C. Capuana-De Amicis di Avola (SR). L'accesso e il suo utilizzo è libero a tutti.
  
 ---
 
