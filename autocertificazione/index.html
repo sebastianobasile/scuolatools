@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Autocertificazione per tutti gli usi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            /* --- BLOCCO CONFIGURAZIONE TESTI --- */
+            --titolo-doc: "DICHIARAZIONE SOSTITUTIVA DI AUTOCERTIFICAZIONE";
+            --sottotitolo-normativo: "(Dichiarazione resa ai sensi dell'art. 47 - D.P.R. 28 Dicembre 2000, n. 445)";
+            --clausola-consapevolezza: "consapevole che chiunque rilascia dichiarazioni mendaci è punito ai sensi del codice penale e delle leggi speciali in materia, ai sensi e per gli effetti dell'art. 46 D.P.R. n. 445/2000,";
+            --nota-firma: "La firma non va autenticata, né deve necessariamente avvenire alla presenza dell'impiegato dell'Ente.";
+            --informativa-privacy: "Informativa ai sensi dell'art. 13 d. Lgsl. 196/2003 'Tutela della Privacy'. I dati sopra riportati sono prescritti dalle disposizioni vigenti ai fini del procedimento per il quale sono richiesti e verranno utilizzati esclusivamente per tale scopo.";
+            --dicitura-firma-sostituita-r1: "Firma autografa sostituita a mezzo stampa";
+            --dicitura-firma-sostituita-r2: "ai sensi dell'art. 3 comma 2 D.lgs. n. 39/93";
+            --footer-text: "MOD. DICHIARAZIONE SOSTITUTIVA DI AUTOCERTIFICAZIONE – Developed S. Basile – V. 2.0 - Febbraio 2026";
+
+            /* --- BLOCCO CONFIGURAZIONE STILE --- */
+            --font-size: 11.5pt;      /* Modifica qui la grandezza del font */
+            --line-height: 1.7;     /* Modifica qui l'interlinea (es: 1.4, 1.6, 1.8) */
+            --primary-color: #0d6efd;
+        }
+
+        body { background-color: #525659; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .sidebar { background: #f8f9fa; height: 100vh; overflow-y: auto; padding: 20px; border-right: 3px solid var(--primary-color); box-shadow: 2px 0 10px rgba(0,0,0,0.2); }
+        .bg-header { background-color: var(--primary-color) !important; color: white; padding: 8px 12px; margin-top: 15px; border-radius: 5px; font-weight: bold; text-transform: uppercase; font-size: 0.8rem; }
+        
+        .preview-area { height: 100vh; overflow-y: auto; padding: 20px; display: flex; justify-content: center; }
+        
+        #doc-pdf {
+            width: 210mm; min-height: 296mm; padding: 20mm;
+            background: white; color: black;
+            font-size: var(--font-size); line-height: var(--line-height);
+            box-sizing: border-box; display: flex; flex-direction: column;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .titolo-doc { text-align: center; font-weight: bold; font-size: 1.3em; margin-bottom: 5px; text-transform: uppercase; }
+        .sottotitolo { text-align: center; font-size: 0.85em; margin-bottom: 30px; font-style: italic; }
+        
+        .dynamic-field { font-weight: bold; border-bottom: 1px dotted #666; padding: 0 3px; }
+        .area-testo { margin-top: 15px; text-align: justify; white-space: pre-wrap; min-height: 300px; border: 1px solid #f0f0f0; padding: 15px; background: #fafafa; }
+        
+        .normativa { text-align: justify; margin: 20px 0; }
+        .privacy-box { font-size: 0.75em; text-align: justify; margin-top: auto; padding-top: 15px; border-top: 1px solid #eee; line-height: 1.3; }
+        
+        .signature-area { margin-top: 40px; display: flex; justify-content: space-between; align-items: flex-start; }
+        .signature-block { text-align: center; width: 300px; line-height: 1.2; }
+        .legal-stamp { font-size: 0.7em; font-style: italic; margin-top: 8px; color: #444; }
+        
+        .footer-info { font-size: 7pt; color: #777; text-align: center; padding-top: 10px; margin-top: 10px; }
+
+        @media print { .sidebar { display: none; } .preview-area { padding: 0; } }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4 sidebar">
+            <h4 class="fw-bold mb-4">Editor Autocertificazione</h4>
+            
+            <div class="bg-header">Anagrafica Dichiarante</div>
+            <div class="row g-2 p-2">
+                <div class="col-12"><label class="form-label small mb-0">Nome e Cognome</label><input type="text" id="in_nome" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-6">
+                    <label class="form-label small mb-0">Genere</label>
+                    <select id="in_genere" class="form-select form-select-sm" onchange="sync()">
+                        <option value="M">Uomo</option>
+                        <option value="F">Donna</option>
+                    </select>
+                </div>
+                <div class="col-6"><label class="form-label small mb-0">C.F.</label><input type="text" id="in_cf" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-8"><label class="form-label small mb-0">Nato/a a</label><input type="text" id="in_nato_a" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-4"><label class="form-label small mb-0">Prov.</label><input type="text" id="in_nato_prov" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-12"><label class="form-label small mb-0">Data di nascita</label><input type="date" id="in_nato_il" class="form-control form-control-sm" oninput="sync()"></div>
+            </div>
+
+            <div class="bg-header">Residenza</div>
+            <div class="row g-2 p-2">
+                <div class="col-9"><label class="form-label small mb-0">Comune</label><input type="text" id="in_res_a" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-3"><label class="form-label small mb-0">Prov.</label><input type="text" id="in_res_prov" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-12"><label class="form-label small mb-0">Indirizzo</label><input type="text" id="in_via" class="form-control form-control-sm" oninput="sync()"></div>
+            </div>
+
+            <div class="bg-header">Corpo del Documento</div>
+            <div class="p-2">
+                <textarea id="in_corpo" class="form-control form-control-sm" rows="10" oninput="sync()" placeholder="Scrivi qui l'oggetto della dichiarazione..."></textarea>
+            </div>
+
+            <div class="bg-header">Luogo, Data e Firma</div>
+            <div class="row g-2 p-2">
+                <div class="col-12"><label class="form-label small mb-0">Località (es. Avola)</label><input type="text" id="in_localita" class="form-control form-control-sm" value="Avola" oninput="sync()"></div>
+                <div class="col-12"><label class="form-label small mb-0">Data Documento</label><input type="date" id="in_data_doc" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-12 mt-3">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="in_sostituita" onchange="sync()">
+                        <label class="form-check-label small">Applica Firma Sostituita</label>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary w-100 mt-4 fw-bold py-2" onclick="exportPDF()">SCARICA PDF</button>
+            <button class="btn btn-outline-secondary btn-sm w-100 mt-2" onclick="resetForm()">PULISCI TUTTO</button>
+            <div class="credits" style="font-size:0.75rem; color:#666; margin-top:20px; border-top:1px solid #ddd; padding-top:10px;">
+                <strong>Developed by Sebastiano Basile</strong>
+                &nbsp;&middot;&nbsp;
+                <a href="https://github.com/sebastianobasile/scuolatools" target="_blank" style="color:#666; text-decoration:none;">GitHub</a>
+                &nbsp;&middot;&nbsp;
+                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it" target="_blank" style="color:#666; text-decoration:none;">CC BY-NC-SA 4.0</a><br>
+                <a href="https://paypal.me/superscuola" target="_blank" style="color:#0070ba; font-size:0.8rem; text-decoration:none;">&#9749; Offrimi un caff&egrave; (PayPal)</a>
+            </div>
+        </div>
+
+        <div class="col-md-8 preview-area">
+            <div id="doc-pdf">
+                <div class="titolo-doc" id="cfg_titolo"></div>
+                <div class="sottotitolo" id="cfg_sotto"></div>
+
+                <div class="normativa">
+                    <span id="out_sottoscritto">Il sottoscritto</span> 
+                    <span class="dynamic-field" id="out_nome">______________________________</span>, 
+                    nat<span id="out_v_nato">o</span> a <span class="dynamic-field" id="out_nato_a">__________</span> 
+                    (prov. <span class="dynamic-field" id="out_nato_prov">__</span>) il 
+                    <span class="dynamic-field" id="out_nato_il">__________</span>, 
+                    residente a <span class="dynamic-field" id="out_res_a">__________</span> 
+                    (prov. <span class="dynamic-field" id="out_res_prov">__</span>) in via 
+                    <span class="dynamic-field" id="out_via">____________________</span>, 
+                    C.F. <span class="dynamic-field" id="out_cf">________________</span>,
+                    <br><br>
+                    <span id="cfg_consapevole"></span>
+                </div>
+
+                <h5 class="text-center fw-bold mt-2">DICHIARA</h5>
+                <div class="area-testo" id="out_corpo"></div>
+
+                <p style="font-size: 0.85em; margin-top: 15px;" id="cfg_nota_firma"></p>
+
+                <div class="signature-area">
+                    <div><span id="out_localita">Avola</span>, <span class="dynamic-field" id="out_data_doc">__________</span></div>
+                    <div class="signature-block">
+                        IL DICHIARANTE<br><br>
+                        <b id="out_firma_nome" style="text-transform: uppercase;">____________________</b>
+                        <div class="legal-stamp" id="out_legale"></div>
+                    </div>
+                </div>
+
+                <div class="privacy-box" id="cfg_privacy"></div>
+                <div class="footer-info" id="cfg_footer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function sync() {
+        // Caricamento variabili CSS per testi configurabili
+        const root = getComputedStyle(document.documentElement);
+        const getV = (name) => root.getPropertyValue(name).replace(/"/g, '').trim();
+
+        document.getElementById('cfg_titolo').innerText = getV('--titolo-doc');
+        document.getElementById('cfg_sotto').innerText = getV('--sottotitolo-normativo');
+        document.getElementById('cfg_consapevole').innerText = getV('--clausola-consapevolezza');
+        document.getElementById('cfg_nota_firma').innerText = "• " + getV('--nota-firma');
+        document.getElementById('cfg_privacy').innerText = getV('--informativa-privacy');
+        document.getElementById('cfg_footer').innerText = getV('--footer-text');
+
+        const isF = document.getElementById('in_genere').value === "F";
+        const nome = document.getElementById('in_nome').value;
+
+        // Logica di genere
+        document.getElementById('out_sottoscritto').innerText = isF ? "La sottoscritta" : "Il sottoscritto";
+        document.getElementById('out_v_nato').innerText = isF ? "a" : "o";
+
+        // Mapping dati
+        document.getElementById('out_nome').innerText = nome.toUpperCase() || "____________________";
+        document.getElementById('out_cf').innerText = document.getElementById('in_cf').value.toUpperCase() || "________________";
+        document.getElementById('out_nato_a').innerText = document.getElementById('in_nato_a').value.toUpperCase() || "__________";
+        document.getElementById('out_nato_prov').innerText = document.getElementById('in_nato_prov').value.toUpperCase() || "__";
+        document.getElementById('out_res_a').innerText = document.getElementById('in_res_a').value.toUpperCase() || "__________";
+        document.getElementById('out_res_prov').innerText = document.getElementById('in_res_prov').value.toUpperCase() || "__";
+        document.getElementById('out_via').innerText = document.getElementById('in_via').value.toUpperCase() || "____________________";
+        document.getElementById('out_corpo').innerText = document.getElementById('in_corpo').value;
+        
+        // Gestione Località Dinamica
+        const loc = document.getElementById('in_localita').value;
+        document.getElementById('out_localita').innerText = loc || "__________";
+
+        // Gestione Date
+        const fmt = (idIn, idOut) => {
+            const v = document.getElementById(idIn).value;
+            document.getElementById(idOut).innerText = v ? v.split('-').reverse().join('/') : "__________";
+        };
+        fmt('in_nato_il', 'out_nato_il');
+        fmt('in_data_doc', 'out_data_doc');
+
+        // Firma
+        document.getElementById('out_firma_nome').innerText = nome || "____________________";
+        if (document.getElementById('in_sostituita').checked && nome.trim() !== "") {
+            document.getElementById('out_legale').innerHTML = `${getV('--dicitura-firma-sostituita-r1')}<br>${getV('--dicitura-firma-sostituita-r2')}`;
+        } else {
+            document.getElementById('out_legale').innerHTML = "";
+        }
+
+        // Auto-save
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            localStorage.setItem('cfg_auto_'+el.id, el.type === 'checkbox' ? el.checked : el.value);
+        });
+    }
+
+    function resetForm() {
+        if(confirm("Attenzione: questo cancellerà tutti i dati inseriti. Continuare?")) {
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                if(el.type === 'checkbox') el.checked = false; 
+                else if(el.id === 'in_localita') el.value = "Avola";
+                else el.value = "";
+                localStorage.removeItem('cfg_auto_'+el.id);
+            });
+            sync();
+        }
+    }
+
+    function exportPDF() {
+        const element = document.getElementById('doc-pdf');
+        const nome = document.getElementById('in_nome').value.trim().replace(/\s+/g, '_') || "Autocertificazione";
+        html2pdf().from(element).set({
+            margin: 0, 
+            filename: `autocertificazione_${nome}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2, useCORS: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).save();
+    }
+
+    window.onload = () => {
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            const v = localStorage.getItem('cfg_auto_'+el.id);
+            if(v !== null) { 
+                if(el.type === 'checkbox') el.checked = (v === 'true'); 
+                else el.value = v; 
+            }
+        });
+        sync();
+    };
+</script>
+</body>
+</html>

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Convocazione Genitori - Versione digitale – S. Basile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            /* --- BLOCCO CONFIGURAZIONE INTESTAZIONI --- */
+            --dirigente-r1: "AL DIRIGENTE SCOLASTICO";
+            --dirigente-r2: "PROF. GIUSEPPE CANINO";
+            --scuola-r1: "3° ISTITUTO COMPRENSIVO";
+            --scuola-r2: "CAPUANA-DE AMICIS AVOLA";
+            --contatti-scuola: "TEL. 0931.318330 - SRIC83400L@ISTRUZIONE.IT";
+
+            /* --- BLOCCO CONFIGURAZIONE TESTI --- */
+            --titolo-doc: "RICHIESTA CONVOCAZIONI GENITORI ALUNNI";
+            --testo-chiede-base: "alla S.V., in qualità di"; 
+            --nota-scuola: "* Indicare Ordine e grado di scuola. Se trattasi di istituto di scuola secondaria di II grado anche il nome dell'indirizzo scolastico.";
+            --footer-text: "MOD. RICHIESTA CONVOCAZIONI GENITORI ALUNNI – Developed S. Basile – V. 2.2 - Marzo 2026";
+
+            /* --- BLOCCO CONFIGURAZIONE STILE --- */
+            --font-size: 11pt;      
+            --line-height: 1.8;     
+            --primary-color: red;
+        }
+
+        body { background-color: #f4f7f6; margin: 0; padding: 0; font-family: 'Segoe UI', Arial, sans-serif; }
+        .sidebar { background: #ffffff; height: 100vh; overflow-y: auto; padding: 20px; border-right: 1px solid #ddd; }
+        .bg-header { background-color: var(--primary-color) !important; color: white; padding: 8px 12px; margin-top: 15px; border-radius: 4px; font-weight: bold; font-size: 0.8rem; }
+        
+        .preview-area { height: 100vh; overflow-y: auto; padding: 20px; display: flex; justify-content: center; }
+        
+        #doc-pdf {
+            width: 210mm; min-height: 296mm; padding: 15mm 20mm;
+            background: white; color: black;
+            font-size: var(--font-size); line-height: var(--line-height);
+            box-sizing: border-box; display: flex; flex-direction: column;
+        }
+
+        .header-right { text-align: right; margin-bottom: 30px; font-weight: bold; line-height: 1.2; }
+        .titolo-doc { text-align: center; font-weight: bold; font-size: 1.3em; margin: 20px 0; text-decoration: underline; }
+        
+        .dynamic-field { font-weight: bold; border-bottom: 1px dotted #000; padding: 0 3px; }
+        .area-elenco { margin-top: 10px; min-height: 220px; border: 1px solid #eee; padding: 10px; background: #fff; white-space: pre-wrap; line-height: 1.4; }
+        
+        .signature-block { align-self: flex-end; text-align: center; width: 300px; margin-top: 40px; line-height: 1.1; }
+        .legal-stamp { font-size: 0.75em; font-style: italic; margin-top: 5px; }
+        
+        .footer-nota { font-size: 8pt; margin-top: auto; border-top: 0.5px solid #000; padding-top: 5px; font-style: italic; }
+        .footer-info { font-size: 7pt; color: #666; text-align: center; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4 sidebar">
+            <h5 class="fw-bold mb-3">Editor Convocazione</h5>
+            
+            <div class="bg-header">Dati Docente</div>
+            <div class="row g-2 p-2">
+                <div class="col-12"><label class="small">Nome e Cognome</label><input type="text" id="in_nome" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-6">
+                    <label class="small">Genere</label>
+                    <select id="in_genere" class="form-select form-select-sm" onchange="sync()">
+                        <option value="M">Sottoscritto (M)</option>
+                        <option value="F">Sottoscritta (F)</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <label class="small">Ruolo nel plesso</label>
+                    <select id="in_ruolo" class="form-select form-select-sm" onchange="sync()">
+                        <option value="docente coordinatore">Docente Coordinatore</option>
+                        <option value="docente della classe">Docente della classe</option>
+                        <option value="docente di sostegno della classe">Docente di sostegno della classe</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="bg-header">Riferimenti Classe</div>
+            <div class="row g-2 p-2">
+                <div class="col-6"><label class="small">Classe/Sez.</label><input type="text" id="in_classe" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-6"><label class="small">Plesso</label><input type="text" id="in_plesso" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-12"><label class="small">Ordine Scuola*</label><input type="text" id="in_scuola_tipo" class="form-control form-control-sm" placeholder="es. Primaria" oninput="sync()"></div>
+            </div>
+
+            <div class="bg-header">Dettagli Convocazione</div>
+            <div class="row g-2 p-2">
+                <div class="col-6"><label class="small">Data Incontro</label><input type="date" id="in_data_inc" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-6"><label class="small">Ora Incontro</label><input type="time" id="in_ora_inc" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-12"><label class="small">Elenco Alunni interessati</label>
+                <textarea id="in_elenco" class="form-control form-control-sm" rows="5" oninput="sync()" placeholder="Inserire cognome e nome dell’alunno/a; in caso di più alunni, elencarli uno sotto l’altro."></textarea></div>
+            </div>
+
+            <div class="bg-header">Data e Firma</div>
+            <div class="row g-2 p-2">
+                <div class="col-12"><label class="small">Data del documento</label><input type="date" id="in_data_doc" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-12 mt-2">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="in_sostituita" onchange="sync()">
+                        <label class="form-check-label small">Firma sostituita a mezzo stampa</label>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary w-100 mt-4 fw-bold" onclick="exportPDF()">SCARICA PDF</button>
+            <button class="btn btn-outline-secondary btn-sm w-100 mt-2" onclick="resetForm()">PULISCI CAMPI</button>
+            <div class="credits" style="font-size:0.75rem; color:#666; margin-top:20px; border-top:1px solid #ddd; padding-top:10px;">
+                <strong>Developed by Sebastiano Basile</strong>
+                &nbsp;&middot;&nbsp;
+                <a href="https://github.com/sebastianobasile/scuolatools" target="_blank" style="color:#666; text-decoration:none;">GitHub</a>
+                &nbsp;&middot;&nbsp;
+                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it" target="_blank" style="color:#666; text-decoration:none;">CC BY-NC-SA 4.0</a><br>
+                <a href="https://paypal.me/superscuola" target="_blank" style="color:#0070ba; font-size:0.8rem; text-decoration:none;">&#9749; Offrimi un caff&egrave; (PayPal)</a>
+            </div>
+        </div>
+
+        <div class="col-md-8 preview-area">
+            <div id="doc-pdf">
+                <div class="header-right">
+                    <span id="cfg_dir1"></span><br>
+                    <span id="cfg_dir2"></span><br>
+                    <span id="cfg_scu1"></span><br>
+                    <span id="cfg_scu2"></span><br>
+                    <small id="cfg_cont"></small>
+                </div>
+
+                <div class="titolo-doc" id="cfg_titolo"></div>
+
+                <p>
+                    <span id="out_sottoscritto">Il sottoscritto</span> 
+                    <span class="dynamic-field" id="out_nome">______________________________</span>, 
+                    docente in servizio presso questo istituto nella classe <span class="dynamic-field" id="out_classe">_____</span> 
+                    della scuola* <span class="dynamic-field" id="out_scuola_tipo">__________</span> 
+                    del plesso <span class="dynamic-field" id="out_plesso">__________</span>,
+                </p>
+
+                <h5 class="text-center fw-bold mt-2">CHIEDE</h5>
+                
+                <p>
+                    <span id="out_frase_chiede"></span> 
+                    <b><span id="out_ruolo_testo">__________</span></b>, 
+                    di convocare gli esercenti la responsabilità genitoriale (genitori o altri soggetti legalmente titolari della patria potestà) degli alunni sotto elencati per il giorno 
+                    <span class="dynamic-field" id="out_data_inc">__________</span> 
+                    alle ore <span class="dynamic-field" id="out_ora_inc">____:____</span>:
+                </p>
+
+                <div class="area-elenco" id="out_elenco"></div>
+
+                <div class="mt-4">Avola, <span class="dynamic-field" id="out_data_doc">__________</span></div>
+
+                <div class="signature-block">
+                    Firma del richiedente<br><br>
+                    <b id="out_firma_nome" style="text-transform: uppercase;">____________________</b>
+                    <div class="legal-stamp" id="out_legale"></div>
+                </div>
+
+                <div class="footer-nota" id="cfg_nota"></div>
+                <div class="footer-info" id="cfg_footer"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function sync() {
+        const root = getComputedStyle(document.documentElement);
+        const getV = (n) => root.getPropertyValue(n).replace(/"/g, '').trim();
+
+        // Testi Fissi
+        document.getElementById('cfg_dir1').innerText = getV('--dirigente-r1');
+        document.getElementById('cfg_dir2').innerText = getV('--dirigente-r2');
+        document.getElementById('cfg_scu1').innerText = getV('--scuola-r1');
+        document.getElementById('cfg_scu2').innerText = getV('--scuola-r2');
+        document.getElementById('cfg_cont').innerText = getV('--contatti-scuola');
+        document.getElementById('cfg_titolo').innerText = getV('--titolo-doc');
+        document.getElementById('cfg_nota').innerText = getV('--nota-scuola');
+        document.getElementById('cfg_footer').innerText = getV('--footer-text');
+        document.getElementById('out_frase_chiede').innerText = getV('--testo-chiede-base');
+
+        const isF = document.getElementById('in_genere').value === "F";
+        const nome = document.getElementById('in_nome').value;
+        const ruolo = document.getElementById('in_ruolo').value;
+
+        // Gestione Genere e Ruolo
+        document.getElementById('out_sottoscritto').innerText = isF ? "La sottoscritta" : "Il sottoscritto";
+        document.getElementById('out_ruolo_testo').innerText = ruolo;
+
+        // Dati Variabili
+        document.getElementById('out_nome').innerText = nome.toUpperCase() || "____________________";
+        document.getElementById('out_classe').innerText = document.getElementById('in_classe').value.toUpperCase() || "_____";
+        document.getElementById('out_scuola_tipo').innerText = document.getElementById('in_scuola_tipo').value.toUpperCase() || "__________";
+        document.getElementById('out_plesso').innerText = document.getElementById('in_plesso').value.toUpperCase() || "__________";
+        document.getElementById('out_ora_inc').innerText = document.getElementById('in_ora_inc').value || "____:____";
+        document.getElementById('out_elenco').innerText = document.getElementById('in_elenco').value;
+
+        // Formattazione Date
+        const fmt = (idIn, idOut) => {
+            const v = document.getElementById(idIn).value;
+            document.getElementById(idOut).innerText = v ? v.split('-').reverse().join('/') : "__________";
+        };
+        fmt('in_data_inc', 'out_data_inc');
+        fmt('in_data_doc', 'out_data_doc');
+
+        // Firma
+        document.getElementById('out_firma_nome').innerText = nome || "____________________";
+        if (document.getElementById('in_sostituita').checked && nome.trim() !== "") {
+            document.getElementById('out_legale').innerHTML = "Firma autografa sostituita a mezzo stampa<br>ai sensi dell'art. 3 comma 2 D.lgs. n. 39/93";
+        } else { document.getElementById('out_legale').innerHTML = ""; }
+
+        // Local Storage
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            localStorage.setItem('conv_v21_'+el.id, el.type === 'checkbox' ? el.checked : el.value);
+        });
+    }
+
+    function resetForm() {
+        if(confirm("Svuotare tutti i campi inseriti?")) {
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                if(el.type === 'checkbox') el.checked = false; else el.value = "";
+                localStorage.removeItem('conv_v21_'+el.id);
+            });
+            sync();
+        }
+    }
+
+    function exportPDF() {
+        const element = document.getElementById('doc-pdf');
+        const nome = document.getElementById('in_nome').value.trim().replace(/\s+/g, '_') || "Docente";
+        html2pdf().from(element).set({
+            margin: 0, filename: `convocazione_genitori_${nome}.pdf`,
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).save();
+    }
+
+    window.onload = () => {
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            const v = localStorage.getItem('conv_v21_'+el.id);
+            if(v !== null) { 
+                if(el.type === 'checkbox') el.checked = (v === 'true'); else el.value = v; 
+            }
+        });
+        sync();
+    };
+</script>
+</body>
+</html>

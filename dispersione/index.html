@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Segnalazione Dispersione Scolastica - Capuana-De Amicis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        /* --- BLOCCO CONFIGURAZIONE (Modificabile) --- */
+        :root {
+            --nome-scuola: "3° ISTITUTO COMPRENSIVO CAPUANA-DE AMICIS DI AVOLA";
+            --sottotitolo-scuola: "TEL. 0931.318330 - SRIC83400L@ISTRUZIONE.IT";
+            --titolo-doc: "SEGNALAZIONE DISPERSIONE SCOLASTICA";
+            --ds-nome: "PROF. GIUSEPPE CANINO";
+            --dicitura-firma-sostituita: "Firma autografa sostituita a mezzo stampa <br> ai sensi dell'art. 3 comma 2 D.lgs. n. 39/93";
+            --footer-nota: "* Indicare Ordine e grado di scuola.";
+            --footer-versione: "MOD. SEGNALAZIONE DISPERSIONE SCOLASTICA V. 1.0 - developed S. Basile – FEB 2026";
+            --font-size: 11.5pt;
+        }
+
+        body { background-color: #525659; margin: 0; padding: 0; }
+        .sidebar { background: #f0f8ff; height: 100vh; overflow-y: auto; padding: 15px; border-right: 2px solid #007bff; font-size: 0.85rem; }
+        .bg-azzurro { background-color: #007bff !important; color: white; padding: 5px 10px; margin-top: 10px; border-radius: 4px; }
+        .preview-area { height: 100vh; overflow-y: auto; padding: 10px; display: flex; justify-content: center; }
+        
+        #doc-pdf {
+            width: 210mm; height: 296mm; padding: 15mm 18mm;
+            background: white; font-family: "Times New Roman", Times, serif; 
+            font-size: var(--font-size); color: black; line-height: 1.5;
+            box-sizing: border-box; display: flex; flex-direction: column;
+        }
+
+        .titolo-principale { text-align: center; font-weight: bold; font-size: 18pt; margin-bottom: 30px; border-bottom: 2px solid black; padding-bottom: 5px; }
+        .ds-header-block { align-self: flex-end; text-align: right; width: 450px; line-height: 1.2; margin-bottom: 40px; }
+        .ds-header-block b { font-size: 12pt; }
+        .dynamic-field { font-weight: bold; border-bottom: 1px dotted #000; padding: 0 2px; }
+        
+        .msg-body { 
+            margin-top: 15px; text-align: justify; min-height: 150px; 
+            white-space: pre-wrap; line-height: 1.8; border-top: 1px solid #eee; padding-top: 10px;
+        }
+
+        .signature-block { margin-top: 50px; align-self: flex-end; text-align: center; width: 320px; line-height: 1.1; }
+        .signature-names { font-style: italic; font-weight: bold; white-space: pre-line; margin-top: 5px; }
+        .legal-stamp { font-size: 8pt; font-style: italic; margin-top: 8px; display: block; line-height: 1.3; }
+        
+        .footer-info { margin-top: auto; font-size: 8.5pt; color: #000; text-align: left; line-height: 1.2; border-top: 0.5px solid #000; padding-top: 5px;}
+        .credits { font-size: 0.75rem; color: #666; margin-top: 20px; border-top: 1px solid #ddd; padding-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4 sidebar">
+            <div class="bg-azzurro small fw-bold">DATI GENERALI</div>
+            <div class="row g-2 p-2">
+                <div class="col-12"><label>Data documento</label><input type="date" id="in_data_oggi" class="form-control form-control-sm" oninput="sync()"></div>
+            </div>
+
+            <div class="bg-azzurro small fw-bold">RIFERIMENTI SCOLASTICI</div>
+            <div class="row g-2 p-2">
+                <div class="col-6"><label>Assente dal giorno</label><input type="date" id="in_dal" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-6"><label>Al giorno</label><input type="date" id="in_al" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-12"><label>Alunno/a (Cognome e Nome)</label><input type="text" id="in_alunno" class="form-control form-control-sm" placeholder="es. Rossi Mario" oninput="sync()"></div>
+                <div class="col-12"><label>Ordine/Grado Scuola</label>
+                    <select id="in_grado" class="form-select form-select-sm" onchange="sync()">
+                        <option value="">Seleziona...</option>
+                        <option value="Scuola dell'Infanzia">Scuola dell'Infanzia</option>
+                        <option value="Scuola Primaria">Scuola Primaria</option>
+                        <option value="Scuola Secondaria di I Grado">Scuola Secondaria di I Grado</option>
+                        <option value="Scuola Secondaria di II Grado">Scuola Secondaria di II Grado</option>
+                    </select>
+                </div>
+                <div class="col-6"><label>Classe e Sezione</label><input type="text" id="in_classe" class="form-control form-control-sm" oninput="sync()"></div>
+                <div class="col-6"><label>Plesso o Indirizzo</label><input type="text" id="in_plesso" class="form-control form-control-sm" oninput="sync()"></div>
+            </div>
+
+            <div class="bg-azzurro small fw-bold">MOTIVAZIONE DELLA SEGNALAZIONE</div>
+            <div class="row g-2 p-2">
+                <div class="col-12"><textarea id="in_comunicazione" class="form-control form-control-sm" rows="5" oninput="sync()"></textarea></div>
+            </div>
+
+            <div class="bg-azzurro small fw-bold">CONFIGURAZIONE FIRMA</div>
+            <div class="row g-2 p-2">
+                <div class="col-12">
+                    <label>Responsabile/i (uno per riga)</label>
+                    <textarea id="in_firma" class="form-control form-control-sm" rows="3" oninput="sync()"></textarea>
+                </div>
+                <div class="col-12 mt-2">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="in_sostituita" onchange="sync()">
+                        <label class="form-check-label" for="in_sostituita">Applica dicitura firma sostituita</label>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-success w-100 my-3 fw-bold" onclick="exportPDF()">SCARICA PDF</button>
+            <button class="btn btn-outline-danger btn-sm w-100" onclick="resetForm()">PULISCI TUTTO</button>
+                        <div class="credits">
+                <strong>Developed by Sebastiano Basile</strong>
+                &nbsp;&middot;&nbsp;
+                <a href="https://github.com/sebastianobasile/scuolatools" target="_blank" style="color:#666; text-decoration:none;">GitHub</a>
+                &nbsp;&middot;&nbsp;
+                <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it" target="_blank" style="color:#666; text-decoration:none;">CC BY-NC-SA 4.0</a><br>
+                <a href="https://paypal.me/superscuola" target="_blank" style="color:#0070ba; font-size:0.8rem; text-decoration:none;">&#9749; Offrimi un caff&egrave; (PayPal)</a>
+            </div>
+        </div>
+
+        <div class="col-md-8 preview-area">
+            <div id="doc-pdf">
+                <div class="titolo-principale" id="cfg_titolo"></div>
+                <div class="ds-header-block">
+                    AL DIRIGENTE SCOLASTICO<br>
+                    <b id="cfg_ds_nome"></b><br>
+                    <div style="font-size: 10pt; font-weight: bold; margin-top: 5px;" id="cfg_scuola"></div>
+                    <div style="font-size: 8pt;" id="cfg_sottoscuola"></div>
+                </div>
+
+                <div class="mt-2">
+                    <p>Periodo dal <span class="dynamic-field" id="out_dal">__________</span> al <span class="dynamic-field" id="out_al">__________</span></p>
+                    <p id="p_totale_giorni" style="display:none; margin-top: -5px; margin-bottom: 10px;">
+                        per un totale di giorni (compresi anche sabato domenica e festivi) <span class="dynamic-field" id="out_totale_giorni">0</span>
+                    </p>
+                    <p>dell'alunno/a <span class="dynamic-field" id="out_alunno">______________________________</span> della scuola* <span class="dynamic-field" id="out_grado">____________________</span></p>
+                    <p>Classe e sezione <span class="dynamic-field" id="out_classe">__________</span> plesso <span class="dynamic-field" id="out_plesso">____________________</span></p>
+                </div>
+
+                <div class="mt-4 fw-bold" style="text-decoration: underline;">Comunicazione all'ufficio di segreteria:</div>
+                <div class="msg-body" id="out_comunicazione"></div>
+
+                <div class="mt-4">Avola, <span class="dynamic-field" id="out_data_oggi">__________</span></div>
+
+                <div class="signature-block">
+                    <span style="font-size: 10pt;">Firma responsabile/i</span>
+                    <div class="signature-names" id="out_firma"></div>
+                    <div class="legal-stamp" id="out_legale"></div>
+                </div>
+
+                <div class="footer-info">
+                    <div id="cfg_footer_nota"></div>
+                    <div style="text-align: center; margin-top: 5px; font-size: 7pt;" id="cfg_footer_ver"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const mesi = ["gennaio", "febbraio", "marzo", "aprile", "maggio", "giugno", "luglio", "agosto", "settembre", "ottobre", "novembre", "dicembre"];
+
+    function fmtDate(s) { if(!s) return "__________"; const d = s.split('-'); return `${d[2]}/${d[1]}/${d[0]}`; }
+
+    function sync() {
+        const root = getComputedStyle(document.documentElement);
+        const getVal = (v) => root.getPropertyValue(v).replace(/"/g, '').trim();
+
+        document.getElementById('cfg_titolo').innerText = getVal('--titolo-doc');
+        document.getElementById('cfg_ds_nome').innerText = getVal('--ds-nome');
+        document.getElementById('cfg_scuola').innerText = getVal('--nome-scuola');
+        document.getElementById('cfg_sottoscuola').innerText = getVal('--sottotitolo-scuola');
+        document.getElementById('cfg_footer_nota').innerText = getVal('--footer-nota');
+        document.getElementById('cfg_footer_ver').innerText = getVal('--footer-versione');
+
+        const d1 = document.getElementById('in_dal').value;
+        const d2 = document.getElementById('in_al').value;
+        document.getElementById('out_dal').innerText = fmtDate(d1);
+        document.getElementById('out_al').innerText = fmtDate(d2);
+
+        if(d1 && d2) {
+            const date1 = new Date(d1); const date2 = new Date(d2);
+            const diffDays = Math.ceil(Math.abs(date2 - date1) / (1000 * 60 * 60 * 24)) + 1; 
+            document.getElementById('out_totale_giorni').innerText = diffDays > 0 ? diffDays : 0;
+            document.getElementById('p_totale_giorni').style.display = "block";
+        } else {
+            document.getElementById('p_totale_giorni').style.display = "none";
+        }
+
+        document.getElementById('out_alunno').innerText = document.getElementById('in_alunno').value.toUpperCase() || "______________________________";
+        document.getElementById('out_data_oggi').innerText = fmtDate(document.getElementById('in_data_oggi').value);
+        document.getElementById('out_grado').innerText = document.getElementById('in_grado').value || "____________________";
+        document.getElementById('out_classe').innerText = document.getElementById('in_classe').value.toUpperCase() || "__________";
+        document.getElementById('out_plesso').innerText = document.getElementById('in_plesso').value.toUpperCase() || "____________________";
+        document.getElementById('out_comunicazione').innerText = document.getElementById('in_comunicazione').value;
+
+        const nomiFirme = document.getElementById('in_firma').value;
+        document.getElementById('out_firma').innerText = nomiFirme;
+        if (document.getElementById('in_sostituita').checked && nomiFirme.trim() !== "") {
+            document.getElementById('out_legale').innerHTML = getVal('--dicitura-firma-sostituita');
+        } else {
+            document.getElementById('out_legale').innerHTML = "";
+        }
+
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            localStorage.setItem('disp_v17_'+el.id, el.type === 'checkbox' ? el.checked : el.value);
+        });
+    }
+
+    function resetForm() {
+        if(confirm("Svuotare il modulo?")) {
+            document.querySelectorAll('input, select, textarea').forEach(el => {
+                if(el.type === 'checkbox') el.checked = false; else el.value = "";
+                localStorage.removeItem('disp_v17_'+el.id);
+            });
+            sync();
+        }
+    }
+
+    function exportPDF() {
+        const element = document.getElementById('doc-pdf');
+        const alunno = document.getElementById('in_alunno').value.trim().replace(/\s+/g, '_') || "Alunno";
+        const dInput = document.getElementById('in_data_oggi').value;
+        
+        let dataFmt = "00_mese_0000";
+        if(dInput) {
+            const d = new Date(dInput);
+            dataFmt = `${d.getDate()}_${mesi[d.getMonth()]}_${d.getFullYear()}`;
+        }
+        
+        const nomeFile = `dispersione_${alunno}_${dataFmt}.pdf`;
+
+        html2pdf().from(element).set({
+            margin: 0, 
+            filename: nomeFile,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        }).save();
+    }
+
+    window.onload = () => {
+        document.querySelectorAll('input, select, textarea').forEach(el => {
+            const v = localStorage.getItem('disp_v17_'+el.id);
+            if(v !== null) { if(el.type === 'checkbox') el.checked = (v === 'true'); else el.value = v; }
+        });
+        sync();
+    };
+</script>
+</body>
+</html>
