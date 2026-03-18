@@ -2,6 +2,7 @@
 
 ![License](https://img.shields.io/badge/Licenza-CC%20BY--NC--SA%204.0-blue)
 ![HTML](https://img.shields.io/badge/HTML-Single%20File-red?logo=html5)
+![Scuole italiane](https://img.shields.io/badge/Destinatari-Scuole%20italiane-red)
 ![GitHub stars](https://img.shields.io/github/stars/sebastianobasile/scuolatools)
 ![GitHub forks](https://img.shields.io/github/forks/sebastianobasile/scuolatools)
 
